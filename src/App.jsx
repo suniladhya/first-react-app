@@ -1,29 +1,41 @@
-import './App.css';
+import { useState } from "react";
+import { useEffect } from "react";
 
-function App() {
+const app = () => {
+  //Create new state
+  const [advice, setAdvice] = useState("");
+  //Create new state for counting the button click counting
+  const [count, setCount] = useState(0);
+
+  async function GetAdvice() {
+    const res = await fetch("https://api.adviceSlip.com/advice");
+
+    const data = await res.json();
+    console.log(data);
+
+    setAdvice(data.slip.advice);
+    // setCount(count + 1);
+    setCount((prevCount) => prevCount + 1);
+  }
+  //create useEffect to load a device very first time
+  useEffect(() => {
+    GetAdvice();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src="Octocat.png" className="App-logo" alt="logo" />
-        <p>
-          GitHub Codespaces <span className="heart">♥️</span> React
-        </p>
-        <p className="small">
-          Edit <code>src/App.jsx</code> and save to reload.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </p>
-      </header>
+    <div>
+      <h1>{advice}</h1>
+      <button onClick={GetAdvice}>Get Advice</button>
+      <Message message1={count} />
     </div>
   );
-}
+};
 
-export default App;
+const Message = (props) => {
+  return (
+    <div>
+      <h3>you have clicked the button {props.message1} times.</h3>
+    </div>
+  );
+};
+export default app;
